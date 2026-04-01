@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+mlruns/
+models/model.pkl
+data/iris_v1.csv
+data/iris_v2.csv
+metrics.json
+.DS_Store

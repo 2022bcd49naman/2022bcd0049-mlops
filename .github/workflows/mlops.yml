@@ -1,0 +1,73 @@
+name: MLOps Pipeline - 2022bcd0049
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  mlops-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Configure DVC S3 remote
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        run: |
+          dvc remote modify myremote access_key_id $AWS_ACCESS_KEY_ID
+          dvc remote modify myremote secret_access_key $AWS_SECRET_ACCESS_KEY
+          dvc remote modify myremote session_token $AWS_SESSION_TOKEN
+          dvc remote modify myremote region $AWS_DEFAULT_REGION
+
+      - name: Pull data with DVC
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        run: dvc pull
+
+      - name: Train model and log with MLflow
+        env:
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+        run: python train.py
+
+      - name: Show metrics
+        run: cat metrics.json
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/2022bcd0049-mlops:latest .
+
+      - name: Push Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/2022bcd0049-mlops:latest
+
+      - name: Run inference validation
+        run: |
+          docker run -d --name mlops-test -p 8000:8000 \
+            ${{ secrets.DOCKERHUB_USERNAME }}/2022bcd0049-mlops:latest
+          sleep 5
+          curl -s http://localhost:8000/health
+          curl -s -X POST http://localhost:8000/predict \
+            -H "Content-Type: application/json" \
+            -d '{"sepal_length":5.1,"sepal_width":3.5,"petal_length":1.4,"petal_width":0.2}'
+          docker stop mlops-test

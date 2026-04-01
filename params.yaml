@@ -1,0 +1,7 @@
+train:
+  dataset_version: v2
+  model_type: RandomForest
+  n_estimators: 100
+  test_size: 0.2
+  random_state: 42
+  features: all
