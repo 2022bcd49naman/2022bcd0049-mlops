@@ -9,7 +9,8 @@ stages:
       - params.yaml:
           - train
     outs:
-      - models/model.pkl
+      - models/model.pkl:
+          cache: false
     metrics:
       - metrics.json:
           cache: false
