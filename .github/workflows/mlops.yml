@@ -69,5 +69,5 @@ jobs:
           curl -s http://localhost:8000/health
           curl -s -X POST http://localhost:8000/predict \
             -H "Content-Type: application/json" \
-            -d '{"sepal_length":5.1,"sepal_width":3.5,"petal_length":1.4,"petal_width":0.2}'
+            -d '{"alcohol":13.2,"malic_acid":1.78,"ash":2.14,"alcalinity_of_ash":11.2,"magnesium":100.0,"total_phenols":2.65,"flavanoids":2.76,"nonflavonoid_phenols":0.26,"proanthocyanins":1.28,"color_intensity":4.38,"hue":1.05,"od280_od315":3.4,"proline":1050.0}'
           docker stop mlops-test
