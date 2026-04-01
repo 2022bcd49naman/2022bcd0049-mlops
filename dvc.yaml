@@ -3,8 +3,8 @@ stages:
     cmd: python train.py
     deps:
       - train.py
-      - data/iris_v1.csv
-      - data/iris_v2.csv
+      - data/wine_v1.csv
+      - data/wine_v2.csv
     params:
       - params.yaml:
           - train

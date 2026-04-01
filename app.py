@@ -11,12 +11,12 @@ ROLL_NO = "2022bcd0049"
 
 app = FastAPI(
     title="MLOps Pipeline API",
-    description=f"Iris Classification API — {STUDENT_NAME} ({ROLL_NO})",
+    description=f"Wine Classification API — {STUDENT_NAME} ({ROLL_NO})",
     version="1.0.0",
 )
 
 model_data = None
-SPECIES_MAP = {0: "setosa", 1: "versicolor", 2: "virginica"}
+CLASS_MAP = {0: "class_0", 1: "class_1", 2: "class_2"}
 
 
 @app.on_event("startup")
@@ -43,19 +43,37 @@ def health():
 
 
 class PredictRequest(BaseModel):
-    sepal_length: float
-    sepal_width: float
-    petal_length: float
-    petal_width: float
+    alcohol: float
+    malic_acid: float
+    ash: float
+    alcalinity_of_ash: float
+    magnesium: float
+    total_phenols: float
+    flavanoids: float
+    nonflavonoid_phenols: float
+    proanthocyanins: float
+    color_intensity: float
+    hue: float
+    od280_od315: float
+    proline: float
 
     model_config = {
         "json_schema_extra": {
             "examples": [
                 {
-                    "sepal_length": 5.1,
-                    "sepal_width": 3.5,
-                    "petal_length": 1.4,
-                    "petal_width": 0.2,
+                    "alcohol": 13.2,
+                    "malic_acid": 1.78,
+                    "ash": 2.14,
+                    "alcalinity_of_ash": 11.2,
+                    "magnesium": 100.0,
+                    "total_phenols": 2.65,
+                    "flavanoids": 2.76,
+                    "nonflavonoid_phenols": 0.26,
+                    "proanthocyanins": 1.28,
+                    "color_intensity": 4.38,
+                    "hue": 1.05,
+                    "od280_od315": 3.4,
+                    "proline": 1050.0,
                 }
             ]
         }
@@ -75,19 +93,29 @@ def predict(request: PredictRequest):
     features = model_data["features"]
 
     input_map = {
-        "sepal_length": request.sepal_length,
-        "sepal_width": request.sepal_width,
-        "petal_length": request.petal_length,
-        "petal_width": request.petal_width,
+        "alcohol": request.alcohol,
+        "malic_acid": request.malic_acid,
+        "ash": request.ash,
+        "alcalinity_of_ash": request.alcalinity_of_ash,
+        "magnesium": request.magnesium,
+        "total_phenols": request.total_phenols,
+        "flavanoids": request.flavanoids,
+        "nonflavonoid_phenols": request.nonflavonoid_phenols,
+        "proanthocyanins": request.proanthocyanins,
+        "color_intensity": request.color_intensity,
+        "hue": request.hue,
+        "od280_od315": request.od280_od315,
+        "proline": request.proline,
     }
     feature_values = [[input_map[f] for f in features]]
 
     prediction_class = int(model.predict(feature_values)[0])
-    prediction_label = SPECIES_MAP.get(prediction_class, str(prediction_class))
+    prediction_label = CLASS_MAP.get(prediction_class, str(prediction_class))
 
     return {
         "prediction": prediction_label,
         "prediction_class": prediction_class,
+        "dataset": "wine",
         "features_used": features,
         "name": STUDENT_NAME,
         "roll_no": ROLL_NO,
