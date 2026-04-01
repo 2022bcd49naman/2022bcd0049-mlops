@@ -27,15 +27,15 @@ GitHub Actions CI/CD
 
 ## Tech Stack
 
-| Component | Tool |
-|-----------|------|
-| Data Versioning | DVC + AWS S3 |
-| Experiment Tracking | MLflow |
-| CI/CD | GitHub Actions |
-| Model Serving | FastAPI |
-| Containerization | Docker + Docker Hub |
-| ML Models | scikit-learn (RandomForest, LogisticRegression) |
-| Dataset | Wine Recognition Dataset (UCI / sklearn) |
+| Component           | Tool                                            |
+| ------------------- | ----------------------------------------------- |
+| Data Versioning     | DVC + AWS S3                                    |
+| Experiment Tracking | MLflow                                          |
+| CI/CD               | GitHub Actions                                  |
+| Model Serving       | FastAPI                                         |
+| Containerization    | Docker + Docker Hub                             |
+| ML Models           | scikit-learn (RandomForest, LogisticRegression) |
+| Dataset             | Wine Recognition Dataset (UCI / sklearn)        |
 
 ---
 
@@ -52,13 +52,13 @@ GitHub Actions CI/CD
 
 **Experiment:** `2022bcd0049_experiment`
 
-| Run | Dataset | Model | Key Config | Accuracy | F1 |
-|-----|---------|-------|-----------|----------|----|
-| Run 1 | v1 | RandomForest | n_estimators=100, all features | 0.9000 | 0.8968 |
-| Run 2 | v1 | RandomForest | n_estimators=200, max_depth=5 | **0.9500** | **0.9506** |
-| Run 3 | v2 | RandomForest | n_estimators=100, all features | 0.9444 | 0.9435 |
-| Run 4 | v2 | RandomForest | n_estimators=100, reduced features | 0.8611 | 0.8536 |
-| Run 5 | v2 | LogisticRegression | C=0.1, reduced features | 0.8333 | 0.8327 |
+| Run   | Dataset | Model              | Key Config                         | Accuracy         | F1               |
+| ----- | ------- | ------------------ | ---------------------------------- | ---------------- | ---------------- |
+| Run 1 | v1      | RandomForest       | n_estimators=100, all features     | 0.9000           | 0.8968           |
+| Run 2 | v1      | RandomForest       | n_estimators=200, max_depth=5      | **0.9500** | **0.9506** |
+| Run 3 | v2      | RandomForest       | n_estimators=100, all features     | 0.9444           | 0.9435           |
+| Run 4 | v2      | RandomForest       | n_estimators=100, reduced features | 0.8611           | 0.8536           |
+| Run 5 | v2      | LogisticRegression | C=0.1, reduced features            | 0.8333           | 0.8327           |
 
 **Best model:** Run 2 — accuracy **0.9500**
 
@@ -67,28 +67,33 @@ GitHub Actions CI/CD
 ## Quick Start
 
 ### 1. Clone & Install
+
 ```bash
-git clone https://github.com/<your-username>/2022bcd0049-mlops.git
+git clone https://github.com/2022bcd49naman/2022bcd0049-mlops.git
 cd 2022bcd0049-mlops
 pip install -r requirements.txt
 ```
 
 ### 2. Pull Data
+
 ```bash
 dvc pull data/wine_v1.csv data/wine_v2.csv
 ```
 
 ### 3. Train
+
 ```bash
 python train.py
 ```
 
 ### 4. Run API locally
+
 ```bash
 uvicorn app:app --host 0.0.0.0 --port 8000
 ```
 
 ### 5. Run via Docker
+
 ```bash
 docker pull 2022bcd0049namanomar/2022bcd0049-mlops:latest
 docker run -d -p 8000:8000 2022bcd0049namanomar/2022bcd0049-mlops:latest
@@ -99,6 +104,7 @@ docker run -d -p 8000:8000 2022bcd0049namanomar/2022bcd0049-mlops:latest
 ## API Endpoints
 
 ### `GET /health`
+
 ```json
 {
   "status": "healthy",
@@ -112,6 +118,7 @@ docker run -d -p 8000:8000 2022bcd0049namanomar/2022bcd0049-mlops:latest
 ### `POST /predict`
 
 **Request:**
+
 ```json
 {
   "alcohol": 13.2,
@@ -131,6 +138,7 @@ docker run -d -p 8000:8000 2022bcd0049namanomar/2022bcd0049-mlops:latest
 ```
 
 **Response:**
+
 ```json
 {
   "prediction": "class_0",
